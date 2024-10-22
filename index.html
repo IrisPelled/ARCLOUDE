@@ -62,7 +62,7 @@
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
         <a-assets>
-            <!-- Load the images, videos and 3D model -->
+            <!-- Load all assets -->
             <img id="model-image" src="model.png">
             <img id="model-image1" src="model1.png">
             <img id="model-image3" src="model3.png">
@@ -72,33 +72,69 @@
             <img id="model-image9" src="model9.png">
             <a-asset-item id="animated-model" src="dancing-character.glb"></a-asset-item>
 
-            <!-- Adding videos with audio settings -->
+            <!-- Videos with proper settings -->
             <video id="video2" src="video2.mp4" preload="auto" playsinline crossorigin="anonymous"></video>
             <video id="video6" src="video6.mp4" preload="auto" playsinline crossorigin="anonymous"></video>
             <video id="video8" src="video8.mp4" preload="auto" playsinline crossorigin="anonymous"></video>
         </a-assets>
 
-        <!-- Image markers -->
+        <!-- Marker 1: Image and 3D model -->
         <a-marker type="pattern" url="trigger.patt">
             <a-image src="#model-image" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
             <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
         </a-marker>
 
-        <!-- More image markers... (same as your original code) -->
+        <!-- Marker 1: Image and 3D model -->
+        <a-marker type="pattern" url="trigger1.patt">
+            <a-image src="#model-image1" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
+            <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
+        </a-marker>
 
-        <!-- Video markers with improved handlers -->
-        <a-marker type="pattern" url="trigger2.patt" videomarker>
+        <!-- Marker 2: Video -->
+        <a-marker type="pattern" url="trigger2.patt" videomarker="video: video2">
             <a-video src="#video2" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-video>
             <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
         </a-marker>
 
-        <a-marker type="pattern" url="trigger6.patt" videomarker>
+        <!-- Marker 3: Image and 3D model -->
+        <a-marker type="pattern" url="trigger3.patt">
+            <a-image src="#model-image3" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
+            <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
+        </a-marker>
+
+        <!-- Marker 4: Image and 3D model -->
+        <a-marker type="pattern" url="trigger4.patt">
+            <a-image src="#model-image4" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
+            <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
+        </a-marker>
+
+        <!-- Marker 5: Image and 3D model -->
+        <a-marker type="pattern" url="trigger5.patt">
+            <a-image src="#model-image5" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
+            <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
+        </a-marker>
+
+        <!-- Marker 6: Video -->
+        <a-marker type="pattern" url="trigger6.patt" videomarker="video: video6">
             <a-video src="#video6" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-video>
             <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
         </a-marker>
 
-        <a-marker type="pattern" url="trigger8.patt" videomarker>
+        <!-- Marker 7: Image and 3D model -->
+        <a-marker type="pattern" url="trigger7.patt">
+            <a-image src="#model-image7" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
+            <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
+        </a-marker>
+
+        <!-- Marker 8: Video -->
+        <a-marker type="pattern" url="trigger8.patt" videomarker="video: video8">
             <a-video src="#video8" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-video>
+            <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
+        </a-marker>
+
+        <!-- Marker 9: Image and 3D model -->
+        <a-marker type="pattern" url="trigger9.patt">
+            <a-image src="#model-image9" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
             <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
         </a-marker>
 
@@ -133,22 +169,27 @@
             const video = document.getElementById(videoId);
             video.muted = true;
             
-            // Add error handling
             video.addEventListener('error', (e) => {
                 console.error(`Error with video ${videoId}:`, e);
             });
         });
 
-        // Handle marker detection
+        // Improved marker detection with specific video handling
         document.querySelectorAll('[videomarker]').forEach(marker => {
+            const videoId = marker.getAttribute('videomarker').split(':')[1].trim();
+            
             marker.addEventListener('markerFound', () => {
-                const videoElement = marker.querySelector('a-video').components.material.material.map.image;
-                videoElement.play().catch(e => console.error('Autoplay failed:', e));
+                const videoElement = document.getElementById(videoId);
+                if (videoElement) {
+                    videoElement.play().catch(e => console.error('Autoplay failed:', e));
+                }
             });
 
             marker.addEventListener('markerLost', () => {
-                const videoElement = marker.querySelector('a-video').components.material.material.map.image;
-                videoElement.pause();
+                const videoElement = document.getElementById(videoId);
+                if (videoElement) {
+                    videoElement.pause();
+                }
             });
         });
 
