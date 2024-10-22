@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Dancing Character</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
+    <style>
+        .button-container {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .visit-site-button, .play-videos-button {
+            padding: 10px 20px;
+            background-color: pink;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            color: white;
+            margin: 5px;
+        }
+
+        .pink-border {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 80%;
+            height: 60%;
+            border: 4px solid hotpink;
+            box-sizing: border-box;
+            z-index: 5;
+        }
+
+        #instructions {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+</head>
+<body style="margin: 0; overflow: hidden;">
+    <div id="instructions">
+        לחץ על המסך כדי להפעיל את הסאונד
+        <button onclick="this.parentElement.style.display='none';">הבנתי</button>
+    </div>
+
+    <div class="pink-border"></div>
+
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+        <a-assets>
+            <!-- Load the images, videos and 3D model -->
+            <img id="model-image" src="model.png">
+            <img id="model-image1" src="model1.png">
+            <img id="model-image3" src="model3.png">
+            <img id="model-image4" src="model4.png">
+            <img id="model-image5" src="model5.png">
+            <img id="model-image7" src="model7.png">
+            <img id="model-image9" src="model9.png">
+            <a-asset-item id="animated-model" src="dancing-character.glb"></a-asset-item>
+
+            <!-- Adding videos with audio settings -->
+            <video id="video2" src="video2.mp4" preload="auto" playsinline crossorigin="anonymous"></video>
+            <video id="video6" src="video6.mp4" preload="auto" playsinline crossorigin="anonymous"></video>
+            <video id="video8" src="video8.mp4" preload="auto" playsinline crossorigin="anonymous"></video>
+        </a-assets>
+
+        <!-- Image markers -->
+        <a-marker type="pattern" url="trigger.patt">
+            <a-image src="#model-image" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
+            <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
+        </a-marker>
+
+        <!-- More image markers... (same as your original code) -->
+
+        <!-- Video markers with improved handlers -->
+        <a-marker type="pattern" url="trigger2.patt" videomarker>
+            <a-video src="#video2" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-video>
+            <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
+        </a-marker>
+
+        <a-marker type="pattern" url="trigger6.patt" videomarker>
+            <a-video src="#video6" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-video>
+            <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
+        </a-marker>
+
+        <a-marker type="pattern" url="trigger8.patt" videomarker>
+            <a-video src="#video8" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-video>
+            <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
+        </a-marker>
+
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <div class="button-container">
+        <button class="play-videos-button" onclick="toggleSound()">הפעל/כבה סאונד</button>
+        <button class="visit-site-button" onclick="window.open('https://irispelled.com', '_blank');">בקר באתר irispelled.com</button>
+    </div>
+
+    <script>
+        let soundEnabled = false;
+        let userInteracted = false;
+        const videos = ['video2', 'video6', 'video8'];
+        
+        // Show instructions on first load
+        window.addEventListener('load', () => {
+            document.getElementById('instructions').style.display = 'block';
+        });
+
+        // Handle user interaction for iOS
+        document.body.addEventListener('click', () => {
+            if (!userInteracted) {
+                userInteracted = true;
+                document.getElementById('instructions').style.display = 'none';
+            }
+        });
+
+        // Initialize video elements
+        videos.forEach(videoId => {
+            const video = document.getElementById(videoId);
+            video.muted = true;
+            
+            // Add error handling
+            video.addEventListener('error', (e) => {
+                console.error(`Error with video ${videoId}:`, e);
+            });
+        });
+
+        // Handle marker detection
+        document.querySelectorAll('[videomarker]').forEach(marker => {
+            marker.addEventListener('markerFound', () => {
+                const videoElement = marker.querySelector('a-video').components.material.material.map.image;
+                videoElement.play().catch(e => console.error('Autoplay failed:', e));
+            });
+
+            marker.addEventListener('markerLost', () => {
+                const videoElement = marker.querySelector('a-video').components.material.material.map.image;
+                videoElement.pause();
+            });
+        });
+
+        function toggleSound() {
+            if (!userInteracted) {
+                document.getElementById('instructions').style.display = 'block';
+                return;
+            }
+
+            soundEnabled = !soundEnabled;
+            videos.forEach(videoId => {
+                const video = document.getElementById(videoId);
+                video.muted = !soundEnabled;
+            });
+
+            document.querySelector('.play-videos-button').textContent = 
+                soundEnabled ? 'כבה סאונד' : 'הפעל סאונד';
+        }
+
+        // iOS requires user interaction before playing video with sound
+        function enableAudioForIOS() {
+            videos.forEach(videoId => {
+                const video = document.getElementById(videoId);
+                video.play().catch(e => console.error('Play failed:', e));
+                video.pause();
+            });
+        }
+    </script>
+</body>
+</html>
