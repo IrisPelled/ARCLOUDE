@@ -49,6 +49,7 @@
             text-align: center;
             z-index: 1000;
             display: none;
+            direction: rtl;
         }
     </style>
 </head>
@@ -62,7 +63,7 @@
 
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
         <a-assets>
-            <!-- Load all assets -->
+            <!-- Images -->
             <img id="model-image" src="model.png">
             <img id="model-image1" src="model1.png">
             <img id="model-image3" src="model3.png">
@@ -70,69 +71,65 @@
             <img id="model-image5" src="model5.png">
             <img id="model-image7" src="model7.png">
             <img id="model-image9" src="model9.png">
+            
+            <!-- 3D Model -->
             <a-asset-item id="animated-model" src="dancing-character.glb"></a-asset-item>
 
-            <!-- Videos with proper settings -->
+            <!-- Videos -->
             <video id="video2" src="video2.mp4" preload="auto" playsinline crossorigin="anonymous"></video>
             <video id="video6" src="video6.mp4" preload="auto" playsinline crossorigin="anonymous"></video>
             <video id="video8" src="video8.mp4" preload="auto" playsinline crossorigin="anonymous"></video>
         </a-assets>
 
-        <!-- Marker 1: Image and 3D model -->
+        <!-- Trigger 1: Image + 3D Model -->
         <a-marker type="pattern" url="trigger.patt">
             <a-image src="#model-image" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
             <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
         </a-marker>
 
-        <!-- Marker 1: Image and 3D model -->
-        <a-marker type="pattern" url="trigger1.patt">
-            <a-image src="#model-image1" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
-            <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
-        </a-marker>
-
-        <!-- Marker 2: Video -->
-        <a-marker type="pattern" url="trigger2.patt" videomarker="video: video2">
+        <!-- Trigger 2: Video + 3D Model -->
+        <a-marker type="pattern" url="trigger2.patt" id="marker2">
             <a-video src="#video2" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-video>
             <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
         </a-marker>
 
-        <!-- Marker 3: Image and 3D model -->
+        <!-- Trigger 3: Image + 3D Model -->
         <a-marker type="pattern" url="trigger3.patt">
             <a-image src="#model-image3" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
             <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
         </a-marker>
 
-        <!-- Marker 4: Image and 3D model -->
+        <!-- Trigger 4: Image + 3D Model -->
         <a-marker type="pattern" url="trigger4.patt">
             <a-image src="#model-image4" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
             <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
         </a-marker>
 
-        <!-- Marker 5: Image and 3D model -->
+        <!-- Trigger 5: Image + 3D Model -->
         <a-marker type="pattern" url="trigger5.patt">
             <a-image src="#model-image5" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
             <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
         </a-marker>
 
-        <!-- Marker 6: Video -->
-        <a-marker type="pattern" url="trigger6.patt" videomarker="video: video6">
+        <!-- Trigger 6: Video + 3D Model -->
+        <a-marker type="pattern" url="trigger6.patt" id="marker6">
             <a-video src="#video6" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-video>
             <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
         </a-marker>
 
-        <!-- Marker 7: Image and 3D model -->
+        <!-- Trigger 7: Image + 3D Model -->
         <a-marker type="pattern" url="trigger7.patt">
             <a-image src="#model-image7" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
             <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
         </a-marker>
 
-        <!-- Marker 8: Video -->
-        <a-marker type="pattern" url="trigger8.patt" videomarker="video: video8">
+        <!-- Trigger 8: Video + 3D Model -->
+        <a-marker type="pattern" url="trigger8.patt" id="marker8">
             <a-video src="#video8" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-video>
             <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
         </a-marker>
 
-        <!-- Marker 9: Image and 3D model -->
+        <!-- Trigger 9: Image + 3D Model -->
         <a-marker type="pattern" url="trigger9.patt">
             <a-image src="#model-image9" position="0 0 0" scale="1 1 1" rotation="-120 0 0"></a-image>
             <a-entity gltf-model="#animated-model" position="0.7 0 1" scale="0.7 0.7 0.7" rotation="-120 0 0"></a-entity>
@@ -149,11 +146,23 @@
     <script>
         let soundEnabled = false;
         let userInteracted = false;
-        const videos = ['video2', 'video6', 'video8'];
+        const videoElements = {
+            video2: document.getElementById('video2'),
+            video6: document.getElementById('video6'),
+            video8: document.getElementById('video8')
+        };
         
         // Show instructions on first load
         window.addEventListener('load', () => {
             document.getElementById('instructions').style.display = 'block';
+            
+            // Initialize all videos as muted
+            Object.values(videoElements).forEach(video => {
+                video.muted = true;
+                video.addEventListener('error', (e) => {
+                    console.error(`Error with video ${video.id}:`, e);
+                });
+            });
         });
 
         // Handle user interaction for iOS
@@ -161,34 +170,32 @@
             if (!userInteracted) {
                 userInteracted = true;
                 document.getElementById('instructions').style.display = 'none';
+                enableAudioForIOS();
             }
         });
 
-        // Initialize video elements
-        videos.forEach(videoId => {
-            const video = document.getElementById(videoId);
-            video.muted = true;
-            
-            video.addEventListener('error', (e) => {
-                console.error(`Error with video ${videoId}:`, e);
-            });
-        });
+        // Handle marker events
+        const markerVideoMap = {
+            'marker2': 'video2',
+            'marker6': 'video6',
+            'marker8': 'video8'
+        };
 
-        // Improved marker detection with specific video handling
-        document.querySelectorAll('[videomarker]').forEach(marker => {
-            const videoId = marker.getAttribute('videomarker').split(':')[1].trim();
+        Object.keys(markerVideoMap).forEach(markerId => {
+            const marker = document.getElementById(markerId);
+            const videoId = markerVideoMap[markerId];
             
             marker.addEventListener('markerFound', () => {
-                const videoElement = document.getElementById(videoId);
-                if (videoElement) {
-                    videoElement.play().catch(e => console.error('Autoplay failed:', e));
+                const video = videoElements[videoId];
+                if (video) {
+                    video.play().catch(e => console.error(`Play failed for ${videoId}:`, e));
                 }
             });
 
             marker.addEventListener('markerLost', () => {
-                const videoElement = document.getElementById(videoId);
-                if (videoElement) {
-                    videoElement.pause();
+                const video = videoElements[videoId];
+                if (video) {
+                    video.pause();
                 }
             });
         });
@@ -200,8 +207,7 @@
             }
 
             soundEnabled = !soundEnabled;
-            videos.forEach(videoId => {
-                const video = document.getElementById(videoId);
+            Object.values(videoElements).forEach(video => {
                 video.muted = !soundEnabled;
             });
 
@@ -211,9 +217,8 @@
 
         // iOS requires user interaction before playing video with sound
         function enableAudioForIOS() {
-            videos.forEach(videoId => {
-                const video = document.getElementById(videoId);
-                video.play().catch(e => console.error('Play failed:', e));
+            Object.values(videoElements).forEach(video => {
+                video.play().catch(() => {/* Ignore errors */});
                 video.pause();
             });
         }
